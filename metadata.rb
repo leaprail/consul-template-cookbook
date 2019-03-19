@@ -1,27 +1,21 @@
-name             'consul-template'
-maintainer       'Adam Krone'
-maintainer_email 'krone.adam@gmail.com'
+name             'consul-template-cookbook'
+maintainer       'Simão Martins'
+maintainer_email 'simao.martins@tecnico.ulisboa.pt'
 license          'Apache-2.0'
-description      'Installs/Configures consul-template'
+description      'Installs/Configures consul-template. This is a fork of the consul-template cookbook which fixes some errors and removes support for Windows.'
 long_description 'Installs/Configures consul-template'
-version          '0.13.0'
+version          '0.1.0'
 
-recipe 'consul-template', 'Installs, configures, and starts the consul-template service.'
-recipe 'consul-template::install_binary', 'Installs consul-template from binary.'
-recipe 'consul-template::install_source', 'Installs consul-template from source.'
-recipe 'consul-template::service', 'Configures and starts the consul-template service.'
+recipe 'consul-template-cookbook', 'Installs, configures, and starts the consul-template service.'
 
-supports 'ubuntu', '>= 14.04'
-supports 'debian', '>= 8.9'
-supports 'centos', '>= 6.9'
-supports 'arch'
-supports 'windows'
+supports 'ubuntu', '>= 18.04'
+supports 'debian', '>= 9.8'
+supports 'centos', '>= 7.6'
 
-depends 'libarchive'
-depends 'golang'
-depends 'runit'
-depends 'nssm'
+%w(tar poise-service).each do |dep|
+  depends dep
+end
 
-issues_url 'https://github.com/adamkrone/chef-consul-template/issues' if respond_to?(:issues_url)
-source_url 'https://github.com/adamkrone/chef-consul-template' if respond_to?(:source_url)
-chef_version '>= 12.1' if respond_to?(:chef_version)
+issues_url 'https://github.com/adamkrone/chef-consul-template/issues'
+source_url 'https://github.com/adamkrone/chef-consul-template'
+chef_version '>= 14.10'

@@ -22,15 +22,11 @@ Installs and configures [consul-template](https://github.com/hashicorp/consul-te
 - `node['consul_template']['base_url']` - Base URL for consul-template binary files
 - `node['consul_template']['version']` - Version of consul-template to install.
   Used to determine which binary to grab from the base_url.
-- `node['consul_template']['install_method']` - How consul-template should be
-  installed. Supports 'binary' or 'source'.
 - `'node['consul_template']['install_dir']` - Directory where consul-template
   should be installed.
 - `node['consul_template']['checksums']` - Contains a hash of checksums where
   the key is the file for a given OS/architecture, and the value is the
   associated checksum. For example, `consul-template_0.3.1_linux_amd64`.
-- `node['consul_template']['source_revision']` - When installing from source,
-  this determines the revision it should use.
 - `node['consul_template']['config_dir']` - The directory that contains the
   configuration files for consul-template.
 - `node['consul_template']['init_style']` - Defines the init system that the
@@ -49,23 +45,7 @@ Additionally, the contents of the `node['consul_template']['config']` hash will 
 
 ### default
 
-Installs and configures consul-template using the install method specified in
-`node['consul_template']['install_method']`.
-
-### install_binary
-
-Installs consul-template using one of the binaries provided by Hashicorp. It
-will also verify the checksum. The default attributes includes the latest
-version's binaries for all supported OS/architectures, including their
-checksum.
-
-### install_source
-
-Installs consul-template from source.
-
-### service
-
-Installs and configures the consul-template service.
+Installs and configures consul-template.
 
 ## LWRP
 

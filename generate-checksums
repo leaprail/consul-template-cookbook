@@ -1,0 +1,42 @@
+#!/bin/bash
+
+set -e
+
+USAGE=$(cat <<EOF
+Usage:
+  $0 version
+EOF
+)
+
+version=$1
+[ -z "$version" ] && { echo "$USAGE"; exit 1; }
+
+empty_sha=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+systems=(linux_386 linux_amd64 linux_arm)
+files=()
+
+function get_files {
+  for system in "${systems[@]}"
+  do
+    file=("consul-template_${version}_${system}.tgz")
+    files+=(${file})
+  done
+}
+
+function print_checksums {
+  echo Generating checksums for v${version}
+
+  for file in "${files[@]}"
+  do
+    binary=https://releases.hashicorp.com/consul-template/${version}/${file}
+    checksum=$(curl -f -L -s $binary | shasum -a 256 | awk '{print $1}')
+    if [ "$checksum" = "$empty_sha" ]; then
+      >&2 echo "Failed to get binary: $binary"
+    else
+      echo "'${file//.tgz}' => '$checksum',"
+    fi
+  done
+}
+
+get_files
+print_checksums
