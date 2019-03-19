@@ -36,7 +36,6 @@ action :create do
   end
 
   template ::File.join(node['consul_template']['config_dir'], new_resource.name) do
-    cookbook 'consul-template'
     source 'config-template.json.erb'
     user node['consul_template']['service_user']
     group node['consul_template']['service_group']
