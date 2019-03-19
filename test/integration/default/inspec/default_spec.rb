@@ -16,6 +16,9 @@ describe file('/etc/consul-template.d/test') do
   its(:content) { should match 'command = "touch /tmp/consul-template-command-test"' }
 end
 
+# Give some time for the consul-template to do its thing and execute the command
+sleep(5)
+
 describe file('/tmp/consul-template-command-test') do
   it { should be_file }
 end
