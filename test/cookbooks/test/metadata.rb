@@ -1,3 +1,3 @@
 name 'test'
 
-depends 'consul-template'
+depends 'consul-template-cookbook'

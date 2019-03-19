@@ -1,4 +1,4 @@
-include_recipe 'consul-template::default'
+include_recipe 'consul-template-cookbook::default'
 
 template '/tmp/test.config.ctmpl' do
   source 'test.config.ctmpl.erb'
