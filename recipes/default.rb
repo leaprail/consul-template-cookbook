@@ -2,6 +2,14 @@ poise_service_user node['consul_template']['service_user'] do
   group node['consul_template']['service_group']
   home '/dev/null'
   shell '/bin/false'
+  not_if { node['consul_template']['service_user'] == 'root' }
+end
+
+group node['consul_template']['service_group'] do
+  system true
+  not_if { node['consul_template']['service_group'] == 'root' }
+  # When user is root the poise_server_user wont create the group
+  only_if { node['consul_template']['service_user'] == 'root' }
 end
 
 directory node['consul_template']['config_dir'] do
