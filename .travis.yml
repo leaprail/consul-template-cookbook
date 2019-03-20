@@ -17,6 +17,10 @@ branches:
 
 services: docker
 
+stages:
+  - linting
+  - test
+
 env:
   matrix:
     - INSTANCE=centos-7
@@ -34,5 +38,6 @@ script: KITCHEN_LOCAL_YAML=.kitchen.dokken.yml kitchen verify ${INSTANCE}
 
 jobs:
   include:
-    - stage: Linting
+    - stage: linting
       script: delivery local verify
+      env:
