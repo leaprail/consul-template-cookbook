@@ -16,6 +16,6 @@ supports 'centos', '>= 7.6'
   depends dep
 end
 
-issues_url 'https://github.com/adamkrone/chef-consul-template/issues'
-source_url 'https://github.com/adamkrone/chef-consul-template'
+issues_url 'https://github.com/ist-dsi/consul-template-cookbook/issues'
+source_url 'https://github.com/ist-dsi/consul-template-cookbook'
 chef_version '>= 14.10'
