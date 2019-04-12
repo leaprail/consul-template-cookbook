@@ -8,9 +8,8 @@ end
 
 group node['consul_template']['service_group'] do
   system true
-  not_if { node['consul_template']['service_group'] == 'root' }
   # When user is root the poise_server_user wont create the group
-  only_if { node['consul_template']['service_user'] == 'root' }
+  only_if { node['consul_template']['service_user'] == 'root' || node['consul_template']['create_service_user'] == false }
 end
 
 directory node['consul_template']['config_dir'] do
