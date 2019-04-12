@@ -13,6 +13,7 @@ default['consul_template'] = {
   'init_style' => node['init_package'],
   'environment_variables' => {},
 
+  'create_service_user' => true,
   'service_user' => 'consul-template',
   'service_group' => 'consul-template',
   'template_mode' => 0600,

@@ -3,6 +3,7 @@ poise_service_user node['consul_template']['service_user'] do
   home '/dev/null'
   shell '/bin/false'
   not_if { node['consul_template']['service_user'] == 'root' }
+  not_if { node['consul_template']['create_service_user'] == false }
 end
 
 group node['consul_template']['service_group'] do
