@@ -67,7 +67,8 @@ end
 command = "#{node['consul_template']['install_dir']}/consul-template"
 options = "-config #{node['consul_template']['config_dir']} " \
           "-consul-addr #{node['consul_template']['consul_addr']} " \
-          "-vault-addr #{node['consul_template']['vault_addr']}"
+          "-vault-addr #{node['consul_template']['vault_addr']} " \
+          "-log-level #{node['consul_template']['log_level']}"
 
 poise_service 'consul-template' do
   user node['consul_template']['service_user']

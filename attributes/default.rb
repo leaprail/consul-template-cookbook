@@ -4,7 +4,7 @@ default['consul_template'] = {
   'install_dir' => '/usr/local/bin',
 
   # Service attributes
-  'log_level' => 'info',
+  'log_level' => 'warn',
   'config_dir' => '/etc/consul-template.d',
   'consul_addr' => '127.0.0.1:8500',
   'vault_addr' => 'https://127.0.0.1:8200',
