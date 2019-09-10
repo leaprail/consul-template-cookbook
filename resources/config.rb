@@ -30,7 +30,7 @@ action :create do
   directory node['consul_template']['config_dir'] do
     user node['consul_template']['service_user']
     group node['consul_template']['service_group']
-    mode 0755
+    mode '0755'
     recursive true
     action :create
   end

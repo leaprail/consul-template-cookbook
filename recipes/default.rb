@@ -15,7 +15,7 @@ end
 directory node['consul_template']['config_dir'] do
   owner node['consul_template']['service_user']
   group node['consul_template']['service_group']
-  mode 0o755
+  mode '0755'
 end
 
 file File.join(node['consul_template']['config_dir'], 'default.json') do
@@ -63,11 +63,15 @@ link "#{node['consul_template']['install_dir']}/consul-template" do
 end
 
 # ==== Create Service ==================================================================================================
+vault_addr = node['consul_template']['vault_addr']
+vault_addr_option = vault_addr.nil? || vault_addr.empty? ? '' : "-vault-addr #{node['consul_template']['vault_addr']} "
+
+consul_addr = node['consul_template']['consul_addr']
+consul_addr_option = consul_addr.nil? || consul_addr.empty? ? '' : "-consul-addr #{node['consul_template']['consul_addr']} "
 
 command = "#{node['consul_template']['install_dir']}/consul-template"
 options = "-config #{node['consul_template']['config_dir']} " \
-          "-consul-addr #{node['consul_template']['consul_addr']} " \
-          "-vault-addr #{node['consul_template']['vault_addr']} " \
+          "#{consul_addr_option} #{vault_addr_option}" \
           "-log-level #{node['consul_template']['log_level']}"
 
 poise_service 'consul-template' do
@@ -76,8 +80,8 @@ poise_service 'consul-template' do
   command "#{command} #{options}"
   stop_signal 'INT'
   reload_signal 'HUP'
+  options Restart: 'on-failure'
   # KillMode=process
-  # Restart=on-failure
   # RestartSec=42s
   #
   # [Unit]

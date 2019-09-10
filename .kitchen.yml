@@ -1,32 +1,39 @@
 driver:
-  name: vagrant
+  name: dokken
+  privileged: true # because Docker and SystemD/Upstart
+  chef_version: current
+
+transport:
+  name: dokken
 
 provisioner:
-  name: chef_zero
+  name: dokken
+  client_rb:
+    chef_license: "accept-silent"
+
+platforms:
+  - name: centos
+    driver:
+      image: dokken/centos-7
+      pid_one_command: /usr/lib/systemd/systemd
+  - name: debian
+    driver:
+      image: dokken/debian-10
+      pid_one_command: /bin/systemd
+      intermediate_instructions:
+        - RUN /usr/bin/apt-get update
+  - name: ubuntu
+    driver:
+      image: dokken/ubuntu-18.04
+      pid_one_command: /bin/systemd
+      intermediate_instructions:
+        - RUN /usr/bin/apt-get update
 
 verifier:
   name: inspec
 
-platforms:
-  - name: centos-7
-    driver:
-      box: centos/7
-    run_list:
-      - recipe[selinux::disabled]
-  - name: ubuntu-18.04
-    driver:
-      box: bento/ubuntu-18.04
-  - name: debian-9
-    driver:
-      box: debian/stretch64
-
-
 suites:
   - name: default
-    run_list:
-      - recipe[consul::default]
-      - recipe[consul-template-cookbook::default]
-      - recipe[test::default]
     attributes:
       consul:
         config:
@@ -35,6 +42,10 @@ suites:
       consul_template:
         config:
           consul: '127.0.0.1:8500'
+    run_list:
+      - recipe[consul::default]
+      - recipe[consul-template-cookbook::default]
+      - recipe[test::default]
     verifier:
       inspec_tests:
         - test/integration/default/inspec
