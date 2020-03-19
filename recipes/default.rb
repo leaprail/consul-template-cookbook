@@ -82,6 +82,7 @@ After=network-online.target vault.service consul.service
 Environment=#{node['consul_template']['environment_variables'].map { |key, val| %("#{key}=#{val}") }.join(' ')}
 ExecStart=#{command}
 ExecReload=/bin/kill -HUP $MAINPID
+User=#{service_user.name}
 Restart=on-failure
 RestartSec=5s
 
@@ -89,8 +90,7 @@ RestartSec=5s
 WantedBy=multi-user.target
 EOF
 
-  user service_user.name
-  action [:create, :enable]
+  action [:create, :enable, :start]
 end
 
 service 'consul-template' do
