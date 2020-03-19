@@ -84,7 +84,6 @@ systemd_unit 'consul-template' do
   Environment=#{node['consul_template']['environment_variables'].map { |key, val| %("#{key}=#{val}") }.join(' ')}
   ExecStart=#{command} #{options}
   ExecReload=/bin/kill -HUP $MAINPID
-  KillSignal=INT
   User=#{service_user.name}
   Restart=on-failure
   RestartSec=5s
@@ -93,7 +92,6 @@ systemd_unit 'consul-template' do
   WantedBy=multi-user.target
   EOU
 
-  user service_user.name
   action [:create, :enable]
 end
 
