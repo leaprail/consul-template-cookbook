@@ -50,7 +50,7 @@ tar_extract url do
   checksum node['consul_template']['checksums'][install_version]
   target_dir install_path
   creates "#{node['consul_template']['install_dir']}/consul-template"
-  owner service_user.name
+  user service_user.name
   group service_group.name
   mode '0755'
 end
