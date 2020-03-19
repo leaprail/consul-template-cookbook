@@ -11,9 +11,8 @@ This is a fork of https://github.com/adamkrone/chef-consul-template with the fol
  - No longer use libarchive as it causes a lot of problems.
  - Use the tgz packages instead of the zip ones.
  - Use a more modern style of defining resources.
- - Use poise_service to define the service.
  - Collapse all the recipes into default.
- - Only define the checksums for the 0.20.0, 0.19.5, and 0.18.0. Or in other words, just for the latest 3 minor versions.
+ - Only define the checksums for the 0.24.1, 0.23.0, and 0.22.1. Or in other words, just for the latest 3 minor versions.
  - Support the arm architecture.
  - Only support the linux OS.
  

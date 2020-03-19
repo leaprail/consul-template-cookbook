@@ -1,26 +1,25 @@
-poise_service_user node['consul_template']['service_user'] do
-  group node['consul_template']['service_group']
-  home '/dev/null'
-  shell '/bin/false'
+service_group = group node['consul_template']['service_group'] do
+  comment "Service group for #{name}"
+  system true
   not_if { node['consul_template']['service_user'] == 'root' }
   not_if { node['consul_template']['create_service_user'] == false }
 end
 
-group node['consul_template']['service_group'] do
+service_user = user node['consul_template']['service_user'] do
+  comment "Service user for #{name}"
+  group service_group.name
+  home node['consul_template']['config_dir']
+  manage_home true
+  shell '/bin/false'
   system true
-  # When user is root the poise_server_user wont create the group
-  only_if { node['consul_template']['service_user'] == 'root' || node['consul_template']['create_service_user'] == false }
-end
-
-directory node['consul_template']['config_dir'] do
-  owner node['consul_template']['service_user']
-  group node['consul_template']['service_group']
-  mode '0755'
+  not_if { node['consul_template']['service_user'] == 'root' }
+  not_if { node['consul_template']['create_service_user'] == false }
+  action [:create, :modify]
 end
 
 file File.join(node['consul_template']['config_dir'], 'default.json') do
-  user node['consul_template']['service_user']
-  group node['consul_template']['service_group']
+  owner service_user.name
+  group service_group.name
   mode node['consul_template']['template_mode']
   sensitive true
   action :create
@@ -43,17 +42,16 @@ url = ::URI.join(node['consul_template']['base_url'], "#{node['consul_template']
 install_path = "#{node['consul_template']['install_dir']}/#{install_version}"
 
 directory install_path do
-  owner node['consul_template']['service_user']
-  group node['consul_template']['service_group']
-  action :create
+  owner service_user.name
+  group service_group.name
 end
 
 tar_extract url do
   checksum node['consul_template']['checksums'][install_version]
   target_dir install_path
   creates "#{node['consul_template']['install_dir']}/consul-template"
-  user node['consul_template']['service_user']
-  group node['consul_template']['service_group']
+  owner service_user.name
+  group service_group.name
   mode '0755'
 end
 
@@ -74,23 +72,33 @@ options = "-config #{node['consul_template']['config_dir']} " \
           "#{consul_addr_option} #{vault_addr_option}" \
           "-log-level #{node['consul_template']['log_level']}"
 
-poise_service 'consul-template' do
-  user node['consul_template']['service_user']
-  environment node['consul_template']['environment_variables']
-  command "#{command} #{options}"
-  stop_signal 'INT'
-  reload_signal 'HUP'
-  options Restart: 'on-failure'
-  # KillMode=process
-  # RestartSec=42s
-  #
-  # [Unit]
-  # Description=Consul Template Daemon
-  # Wants=basic.target
-  # After=basic.target network.target
+
+systemd_unit 'consul-template' do
+  content <<-EOU.gsub(/^\s+/, '')
+  [Unit]
+  Description=Consul Template Daemon
+  Requires=network-online.target
+  Wants=vault.service consul.service
+  After=network-online.target vault.service consul.service
+
+  [Service]
+  Environment=#{node['consul_template']['environment_variables'].map {|key, val| %Q{"#{key}=#{val}"} }.join(' ')}
+  ExecStart=#{command} #{options}
+  ExecReload=/bin/kill -HUP $MAINPID
+  KillSignal=INT
+  User=#{service_user.name}
+  Restart=on-failure
+  RestartSec=5s
+
+  [Install]
+  WantedBy=multi-user.target
+  EOU
+
+  user service_user.name
+  action [:create, :enable]
 end
 
 service 'consul-template' do
   supports status: true, restart: true, reload: true
-  action %i(enable start)
+  action [:enable, :start]
 end
