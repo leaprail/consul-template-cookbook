@@ -72,7 +72,6 @@ options = "-config #{node['consul_template']['config_dir']} " \
           "#{consul_addr_option} #{vault_addr_option}" \
           "-log-level #{node['consul_template']['log_level']}"
 
-
 systemd_unit 'consul-template' do
   content <<-EOU.gsub(/^\s+/, '')
   [Unit]
@@ -82,7 +81,7 @@ systemd_unit 'consul-template' do
   After=network-online.target vault.service consul.service
 
   [Service]
-  Environment=#{node['consul_template']['environment_variables'].map {|key, val| %Q{"#{key}=#{val}"} }.join(' ')}
+  Environment=#{node['consul_template']['environment_variables'].map { |key, val| %("#{key}=#{val}") }.join(' ')}
   ExecStart=#{command} #{options}
   ExecReload=/bin/kill -HUP $MAINPID
   KillSignal=INT
