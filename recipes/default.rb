@@ -61,37 +61,35 @@ link "#{node['consul_template']['install_dir']}/consul-template" do
 end
 
 # ==== Create Service ==================================================================================================
-vault_addr = node['consul_template']['vault_addr']
-vault_addr_option = vault_addr.nil? || vault_addr.empty? ? '' : "-vault-addr #{node['consul_template']['vault_addr']} "
-
 consul_addr = node['consul_template']['consul_addr']
-consul_addr_option = consul_addr.nil? || consul_addr.empty? ? '' : "-consul-addr #{node['consul_template']['consul_addr']} "
+consul_addr_option = consul_addr.nil? || consul_addr.empty? ? '' : " -consul-addr #{node['consul_template']['consul_addr']}"
 
-command = "#{node['consul_template']['install_dir']}/consul-template"
-options = "-config #{node['consul_template']['config_dir']} " \
-          "#{consul_addr_option} #{vault_addr_option}" \
-          "-log-level #{node['consul_template']['log_level']}"
+vault_addr = node['consul_template']['vault_addr']
+vault_addr_option = vault_addr.nil? || vault_addr.empty? ? '' : " -vault-addr #{node['consul_template']['vault_addr']}"
 
-systemd_unit 'consul-template' do
-  content <<-EOU.gsub(/^\s+/, '')
-  [Unit]
-  Description=Consul Template Daemon
-  Requires=network-online.target
-  Wants=vault.service consul.service
-  After=network-online.target vault.service consul.service
+command = "#{node['consul_template']['install_dir']}/consul-template -config #{node['consul_template']['config_dir']}" \
+          "#{consul_addr_option}#{vault_addr_option} -log-level #{node['consul_template']['log_level']}"
 
-  [Service]
-  Environment=#{node['consul_template']['environment_variables'].map { |key, val| %("#{key}=#{val}") }.join(' ')}
-  ExecStart=#{command} #{options}
-  ExecReload=/bin/kill -HUP $MAINPID
-  User=#{service_user.name}
-  Restart=on-failure
-  RestartSec=5s
+systemd_unit 'consul-template.service' do
+  content <<-EOF
+[Unit]
+Description=Consul Template Daemon
+Requires=network-online.target
+Wants=vault.service consul.service
+After=network-online.target vault.service consul.service
 
-  [Install]
-  WantedBy=multi-user.target
-  EOU
+[Service]
+Environment=#{node['consul_template']['environment_variables'].map { |key, val| %("#{key}=#{val}") }.join(' ')}
+ExecStart=#{command}
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=5s
 
+[Install]
+WantedBy=multi-user.target
+EOF
+
+  user service_user.name
   action [:create, :enable]
 end
 
