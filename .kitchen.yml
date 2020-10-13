@@ -10,8 +10,8 @@ provisioner:
     chef_license: "accept-silent"
 
 platforms:
-  - name: centos-7.4
-  - name: debian-10.6
+  - name: centos-7
+  - name: debian-10
   - name: ubuntu-20.04
 
 verifier:
