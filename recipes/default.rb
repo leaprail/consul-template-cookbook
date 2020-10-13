@@ -9,27 +9,23 @@ service_user = user node['consul_template']['service_user'] do
   comment "Service user for #{name}"
   group service_group.name
   home node['consul_template']['config_dir']
-  manage_home true
-  shell '/bin/false'
+  manage_home false
+  shell '/usr/sbin/nologin'
   system true
   not_if { node['consul_template']['service_user'] == 'root' }
   not_if { node['consul_template']['create_service_user'] == false }
   action [:create, :modify]
 end
 
-file File.join(node['consul_template']['config_dir'], 'default.json') do
+directory node['consul_template']['config_dir'] do
   owner service_user.name
   group service_group.name
-  mode node['consul_template']['template_mode']
-  sensitive true
-  action :create
-  content JSON.pretty_generate(node['consul_template']['config'], quirks_mode: true)
-  notifies :restart, 'service[consul-template]', :delayed
 end
 
 # ==== Install Consul Template from binary =============================================================================
-
-install_arch = if node['kernel']['machine'].include?('arm')
+install_arch = if node['kernel']['machine'].include?('arm64')
+                 'arm64'
+               elsif node['kernel']['machine'].include?('arm')
                  'arm'
                elsif node['kernel']['machine'].include?('i386')
                  '386'
