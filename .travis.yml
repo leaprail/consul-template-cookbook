@@ -1,10 +1,10 @@
-sudo: required
-dist: trusty
+services:
+  - docker
 
 addons:
   apt:
     sources:
-      - chef-stable-precise
+      - chef-current-xenial
     packages:
       - chefdk
 
