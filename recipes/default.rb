@@ -90,10 +90,10 @@ RestartSec=5s
 WantedBy=multi-user.target
 EOF
 
-  action [:create, :enable, :start]
+  action [:create, :enable]
 end
 
 service 'consul-template' do
   supports status: true, restart: true, reload: true
-  action :nothing
+  action :start
 end
