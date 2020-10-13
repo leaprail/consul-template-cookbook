@@ -1,4 +1,5 @@
 resource_name :consul_template_config
+provides :consul_template_config
 
 default_action :create
 
