@@ -12,7 +12,7 @@ version=$1
 [ -z "$version" ] && { echo "$USAGE"; exit 1; }
 
 empty_sha=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-systems=(linux_386 linux_amd64 linux_arm)
+systems=(linux_386 linux_amd64 linux_arm linux_arm64)
 files=()
 
 function get_files {

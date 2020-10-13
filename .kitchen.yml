@@ -1,33 +1,18 @@
-driver:
-  name: dokken
-  privileged: true # because Docker and SystemD/Upstart
-  chef_version: current
+settings:
+  parallel: true
 
-transport:
-  name: dokken
+driver:
+  name: vagrant
 
 provisioner:
-  name: dokken
+  name: chef_zero
   client_rb:
     chef_license: "accept-silent"
 
 platforms:
-  - name: centos
-    driver:
-      image: dokken/centos-7
-      pid_one_command: /usr/lib/systemd/systemd
-  - name: debian
-    driver:
-      image: dokken/debian-10
-      pid_one_command: /bin/systemd
-      intermediate_instructions:
-        - RUN /usr/bin/apt-get update
-  - name: ubuntu
-    driver:
-      image: dokken/ubuntu-18.04
-      pid_one_command: /bin/systemd
-      intermediate_instructions:
-        - RUN /usr/bin/apt-get update
+  - name: centos-7.4
+  - name: debian-10.6
+  - name: ubuntu-20.04
 
 verifier:
   name: inspec

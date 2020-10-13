@@ -28,5 +28,4 @@ matrix:
   include:
     - script:
       - cookstyle -D
-      - foodcritic .
       env: LINTING=1

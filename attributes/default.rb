@@ -1,6 +1,6 @@
 default['consul_template'] = {
   'base_url' => 'https://releases.hashicorp.com/consul-template/',
-  'version' => '0.24.1',
+  'version' => '0.25.1',
   'install_dir' => '/usr/local/bin',
 
   # Service attributes
