@@ -7,23 +7,21 @@ property :templates, Array, default: []
 # Each element of the array should a Hash with the following values:
 # property :source, String, required: true
 # property :destination, String, required: true
-# property :content, String
+# property :contents, String
 # property :command, String
 # property :command_timeout, String, default: '30s'
-# property :mode, String, default: 0600
+# property :perms, String, default: 0600
 # property :backup, Boolean, default: true
-# property :create_dest_dirs, Boolean, default: true
 # property :left_delimiter, String, default: '{{'
 # property :right_delimiter, String, default: '}}'
-# property :wait_min, String, default: '2s'
-# property :wait_max, String, default: '10s'
+# property :wait, String, default: '2s:10s'
 
 action :create do
   templates = new_resource.templates.map { |v| Mash.from_hash(v) }
 
   # Create entries in configs-template dir but only if it's well formed
   templates.each_with_index do |v, i|
-    raise "Missing source for #{i} entry at '#{new_resource.name}" if v[:source].nil?
+    raise "Missing source and contents for #{i} entry at '#{new_resource.name}" if v[:source].nil? && v[:contents].nil?
     raise "Missing destination for #{i} entry at '#{new_resource.name}" if v[:destination].nil?
   end
 
