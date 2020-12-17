@@ -25,8 +25,8 @@ end
 # Define global options here. use consul_template lwrp to register new
 # templates
 file File.join(node['consul_template']['config_dir'], 'default.json') do
-  user consul_template_user
-  group consul_template_group
+  user service_user.name
+  group service_group.name
   mode node['consul_template']['template_mode']
   sensitive true
   action :create
