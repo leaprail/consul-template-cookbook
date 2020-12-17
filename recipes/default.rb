@@ -22,6 +22,18 @@ directory node['consul_template']['config_dir'] do
   group service_group.name
 end
 
+# Define global options here. use consul_template lwrp to register new
+# templates
+file File.join(node['consul_template']['config_dir'], 'default.json') do
+  user consul_template_user
+  group consul_template_group
+  mode node['consul_template']['template_mode']
+  sensitive true
+  action :create
+  content JSON.pretty_generate(node['consul_template']['config'], quirks_mode: true)
+  notifies :restart, 'service[consul-template]', :delayed
+end
+
 # ==== Install Consul Template from binary =============================================================================
 install_arch = if node['kernel']['machine'].include?('arm64')
                  'arm64'

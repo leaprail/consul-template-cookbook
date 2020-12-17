@@ -39,7 +39,6 @@ action :create do
   template ::File.join(config_dir, new_resource.name) do
     cookbook 'consul-template-cookbook'
     source 'config-template.json.erb'
-    sensitive true
     user node['consul_template']['service_user']
     group node['consul_template']['service_group']
     mode node['consul_template']['template_mode']
