@@ -15,9 +15,11 @@ property :templates, Array, default: []
 # property :left_delimiter, String, default: '{{'
 # property :right_delimiter, String, default: '}}'
 # property :wait, String, default: '2s:10s'
+property :templates_dir, String, default: node['consul_template']['config_dir']
 
 action :create do
   templates = new_resource.templates.map { |v| Mash.from_hash(v) }
+  config_dir = new_resource.templates_dir
 
   # Create entries in configs-template dir but only if it's well formed
   templates.each_with_index do |v, i|
@@ -25,8 +27,8 @@ action :create do
     raise "Missing destination for #{i} entry at '#{new_resource.name}" if v[:destination].nil?
   end
 
-  # Ensure config directory exists
-  directory node['consul_template']['config_dir'] do
+  # Ensure templates directory exists
+  directory config_dir do
     user node['consul_template']['service_user']
     group node['consul_template']['service_group']
     mode '0755'
@@ -34,7 +36,7 @@ action :create do
     action :create
   end
 
-  template ::File.join(node['consul_template']['config_dir'], new_resource.name) do
+  template ::File.join(config_dir, new_resource.name) do
     cookbook 'consul-template-cookbook'
     source 'config-template.json.erb'
     sensitive true
@@ -47,7 +49,7 @@ action :create do
 end
 
 action :delete do
-  file ::File.join(node['consul_template']['config_dir'], new_resource.name) do
+  file ::File.join(config_dir, new_resource.name) do
     action :delete
   end
 end
