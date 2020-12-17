@@ -77,6 +77,7 @@ After=network-online.target vault.service consul.service
 [Service]
 Environment=#{node['consul_template']['environment_variables'].map { |key, val| %("#{key}=#{val}") }.join(' ')}
 ExecStart=#{command}
+ExecStop=/bin/kill -INT $MAINPID
 ExecReload=/bin/kill -HUP $MAINPID
 User=#{service_user.name}
 Restart=on-failure
