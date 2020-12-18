@@ -48,6 +48,8 @@ action :create do
 end
 
 action :delete do
+  config_dir = new_resource.templates_dir
+
   file ::File.join(config_dir, new_resource.name) do
     action :delete
   end
